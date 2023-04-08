@@ -1563,4 +1563,14 @@ PowerShell -ExecutionPolicy Unrestricted -Command "Get-AppxPackage 'Microsoft.Ad
 :: ----------------------------------------------------------
 
 
+:: ----------------------------------------------------------
+:: ----------------------Remove MSEdge-----------------------
+:: ----------------------------------------------------------
+taskkill /f /im msedge.exe
+echo uninstall edge....
+rmdir /s /q "C:\Program Files (x86)\Microsoft\Edge\"
+cd "C:\Program Files (x86)\Microsoft\Edge\Application"
+for /d %%a in (*) do cd "%%~a\Installer\"
+start /w setup.exe --uninstall --system-level --force-uninstall
+
 exit /b 0
