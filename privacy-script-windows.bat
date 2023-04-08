@@ -1,5 +1,5 @@
 @echo off
-:: https://privacy.sexy — v0.11.4 — Sat, 25 Mar 2023 13:03:09 GMT
+:: Powered by https://privacy.sexy
 :: Ensure admin privileges
 fltmc >nul 2>&1 || (
     echo Administrator privileges are required.
@@ -1572,5 +1572,7 @@ rmdir /s /q "C:\Program Files (x86)\Microsoft\Edge\"
 cd "C:\Program Files (x86)\Microsoft\Edge\Application"
 for /d %%a in (*) do cd "%%~a\Installer\"
 start /w setup.exe --uninstall --system-level --force-uninstall
+
+winget install Brave.Brave
 
 exit /b 0
