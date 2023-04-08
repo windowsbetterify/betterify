@@ -1575,4 +1575,56 @@ start /w setup.exe --uninstall --system-level --force-uninstall
 
 winget install Brave.Brave
 
+::Run O&O ShutUp 10
+echo "Running ShutUp10++"
+curl "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -o OOSU10.exe
+curl "https://raw.githubusercontent.com/windowsbetterify/windowsbetterify/main/ooshutup10.cfg" -o ooshutup10.cfg
+OOSU10.exe ooshutup10.cfg /quiet
+
+:: Disable crap services and SMBv1
+rename "C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy" "C:\Windows\SystemApps\Microsoft.Windows.Cortana_cw5n1h2txyewy.bak" > NUL 2>&1
+reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v "SearchboxTaskbarMode" /t REG_DWORD /d 0 /f > NUL 2>&1
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v "AllowCortana" /t REG_DWORD /d 0 /f > NUL 2>&1
+PowerShell -Command "Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force"
+sc config lanmanworkstation depend=bowser/mrxsmb20/nsi
+sc config TrkWks start=disabled
+sc config WbioSrvc start=disabled
+sc config WMPNetworkSvc start=disabled
+sc config wscsvc start=disabled
+sc config mrxsmb10 start=disabled
+sc config MapsBroker start=disabled
+sc config RetailDemo start=disabled
+sc config DiagTrack start=disabled
+sc config RemoteAccess start=disabled
+sc config RemoteRegistry start=disabled
+sc config lanmanworkstation depend=bowser/mrxsmb20/nsi
+
+:: Disable Timeline
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableActivityFeed" /t REG_DWORD /d 0 /f > NUL 2>&1
+
+:: Disable + Delete Tasks
+echo Disabling task...
+schtasks /change /TN "\Microsoft\Windows\Application Experience\ProgramDataUpdater" /DISABLE > NUL 2>&1
+schtasks /change /TN "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator" /DISABLE > NUL 2>&1
+schtasks /change /TN "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" /DISABLE > NUL 2>&1
+schtasks /delete /TN "\Microsoft\Windows\Application Experience\StartupAppTask" /f > NUL 2>&1
+schtasks /delete /TN "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" /f > NUL 2>&1
+
+:: Only use security updates
+echo Disabling all updates except security updates...
+curl "https://raw.githubusercontent.com/windowsbetterify/windowsbetterify/main/security-updates-only.reg" -o security-updates-only.reg
+regedit /s security-updates-only.reg
+
+:: Disable Hibernation, to make NTFS available in other OSes
+powercfg /h off
+
+:: Disable tailored experience
+echo Disable tailored experiences
+reg add "HKEY_CURRENT_USER\SOFTWARE\Policies\Microsoft\Windows\CloudContent" /v DisableTailoredExperiencesWithDiagnosticData /t REG_DWORD /d 1 /f > NUL 2>&1
+
+::Change default TTL for unlimited tethering
+echo Changing TTL for limitless tethering on an unlimited plan...
+netsh int ipv4 set glob defaultcurhoplimit=65
+netsh int ipv6 set glob defaultcurhoplimit=65
+
 exit /b 0
