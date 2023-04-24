@@ -1627,11 +1627,6 @@ echo Changing TTL for limitless tethering on an unlimited plan...
 netsh int ipv4 set glob defaultcurhoplimit=65
 netsh int ipv6 set glob defaultcurhoplimit=65
 
-pushd "%CD%"
-CD /D "%~dp0"
-
-pushd "%~dp0"
-
 dir /b %SystemRoot%\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientExtensions-Package~3*.mum >List.txt
 dir /b %SystemRoot%\servicing\Packages\Microsoft-Windows-GroupPolicy-ClientTools-Package~3*.mum >>List.txt
 
